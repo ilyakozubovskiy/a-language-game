@@ -1,4 +1,6 @@
-using System;
+﻿using System;
+using System.Globalization;
+using System.Text;
 
 namespace LanguageGame
 {
@@ -20,11 +22,87 @@ namespace LanguageGame
         /// "Eat" -> "Eatyay"
         /// "explain" -> "explainyay"
         /// "Smile" -> "Ilesmay"
-        /// "Glove" -> "Oveglay"
+        /// "Glove" -> "Oveglay".
         /// </example>
         public static string TranslateToPigLatin(string phrase)
         {
-            throw new NotImplementedException("You need to implement this method.");
+            if (string.IsNullOrWhiteSpace(phrase))
+            {
+                throw new ArgumentException("Source string cannot be null or empty or whitespace.");
+            }
+
+            StringBuilder result = new StringBuilder(phrase);
+
+            for (int i = 0; i < result.Length; i++)
+            {
+                if (!char.IsLetter(result[i]))
+                {
+                    continue;
+                }
+
+                int beginIndex = i;
+                int endIndex = FindSeparatorIndex(ref result, beginIndex);
+
+                string word = result.ToString(beginIndex, endIndex - beginIndex).ToLower(CultureInfo.CurrentCulture);
+                int vowelIndex = FindVowelIndex(word);
+
+                char firstLetter = result[beginIndex];
+                result.Remove(beginIndex, word.Length);
+                
+                if (vowelIndex == 0)
+                {
+                    result.Insert(beginIndex, word + "yay");
+                    beginIndex += word.Length + 3;
+                }
+                else if (vowelIndex > 0)
+                {
+                    result.Insert(beginIndex, word[vowelIndex..word.Length] + word[..vowelIndex] + "ay");
+                    beginIndex += word.Length + 2;
+                }
+
+                if (char.IsUpper(firstLetter))
+                {
+                    result[i] = char.ToUpper(result[i], CultureInfo.InvariantCulture);
+                }
+
+                i = beginIndex;
+            }
+
+            return result.ToString();
+        }
+
+        private static int FindSeparatorIndex(ref StringBuilder source, int index)
+        {
+            char[] separators = new char[] { ' ', '-', '?', '.', ',', '!' };
+            for (int i = index; i < source.Length; i++)
+            {
+                for (int j = 0; j < separators.Length; j++)
+                {
+                    if (source[i] == separators[j])
+                    {
+                        return i;
+                    }
+                }
+            }
+
+            return source.Length;
+        }
+
+        private static int FindVowelIndex(string source)
+        {
+            char[] vowels = new char[] { 'a', 'e', 'i', 'o', 'u' };
+            for (int i = 0; i < source.Length; i++)
+            {
+                for (int j = 0; j < vowels.Length; j++)
+                {
+                    if (source[i] == vowels[j])
+                    {
+                        return i;
+                    }
+                }
+            }
+
+            return source.Length;
         }
     }
 }
