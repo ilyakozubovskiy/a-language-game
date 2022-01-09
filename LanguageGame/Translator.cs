@@ -41,7 +41,7 @@ namespace LanguageGame
                 }
 
                 int beginIndex = i;
-                int endIndex = FindSeparatorIndex(ref result, beginIndex);
+                int endIndex = FindSeparatorIndex(result, beginIndex);
 
                 string word = result.ToString(beginIndex, endIndex - beginIndex).ToLower(CultureInfo.CurrentCulture);
                 int vowelIndex = FindVowelIndex(word);
@@ -71,7 +71,7 @@ namespace LanguageGame
             return result.ToString();
         }
 
-        private static int FindSeparatorIndex(ref StringBuilder source, int index)
+        private static int FindSeparatorIndex(StringBuilder source, int index)
         {
             char[] separators = new char[] { ' ', '-', '?', '.', ',', '!' };
             for (int i = index; i < source.Length; i++)
